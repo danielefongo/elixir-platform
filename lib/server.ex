@@ -5,7 +5,8 @@ defmodule Parallel.Server do
 
   defp loop do
     receive do
-      message -> IO.inspect message
+      {:async, message} -> IO.inspect message
+      {:sync, caller, message} -> send caller, message
     end
     loop()
   end
