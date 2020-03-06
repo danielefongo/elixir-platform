@@ -19,3 +19,8 @@ Parallel.Calculator.start(3)
 Parallel.Calculator.sum(3)
 Parallel.Calculator.div(2)
 IO.inspect Parallel.Calculator.value()
+
+pid = Parallel.GenClient.start()
+Parallel.GenClient.put(pid, "key", "value")
+value = Parallel.GenClient.get(pid, "key")
+IO.inspect value
