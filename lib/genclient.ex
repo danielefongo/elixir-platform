@@ -1,27 +1,28 @@
 defmodule Parallel.GenClient do
-  @behaviour Parallel.ClientBehaviour
+  use GenServer
 
-  def start do
-    Parallel.GenServer.start(__MODULE__)
+  def start(opts \\ nil) do
+    GenServer.start(__MODULE__, opts)
   end
 
   def put(pid, key, value) do
-    Parallel.GenServer.cast(pid, {:put, key, value})
+    GenServer.cast(pid, {:put, key, value})
   end
 
+  @spec get(atom | pid | {atom, any} | {:via, atom, any}, any) :: any
   def get(pid, key) do
-    Parallel.GenServer.call(pid, {:get, key})
+    GenServer.call(pid, {:get, key})
   end
 
-  def init do
-    Map.new
+  def init(_) do
+    {:ok, Map.new}
   end
 
   def handle_cast({:put, key, value}, state) do
     {:noreply, Map.put(state, key, value)}
   end
 
-  def handle_call({:get, key}, state) do
-    {Map.get(state, key), state}
+  def handle_call({:get, key}, _, state) do
+    {:reply, Map.get(state, key), state}
   end
 end
