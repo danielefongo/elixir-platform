@@ -10,6 +10,7 @@ defmodule Parallel.Cache do
   end
 
   def init(module) do
+    Parallel.Database.start("./data/persist")
     {:ok, %{module: module, map: Map.new()}}
   end
 

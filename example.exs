@@ -25,8 +25,3 @@ bucket = Parallel.Cache.bucket(pid,"1")
 Parallel.Bucket.put(bucket, "key", "value")
 value = Parallel.Bucket.get(bucket, "key")
 IO.inspect value
-
-
-Parallel.Database.start("data/foo")
-Parallel.Database.store("key", "value")
-IO.puts Parallel.Database.load("key")
