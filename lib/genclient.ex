@@ -1,4 +1,6 @@
 defmodule Parallel.GenClient do
+  @behaviour Parallel.ClientBehaviour
+
   def start do
     Parallel.GenServer.start(__MODULE__)
   end
