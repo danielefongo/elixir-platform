@@ -3,15 +3,11 @@ defmodule Parallel.Server do
     spawn &(loop/0)
   end
 
-  def sync(server_pid, query_def) do
-    send(server_pid, {:sync, self(), query_def})
+  def run(server_pid, query_function) do
+    send(server_pid, {self(), query_function})
   end
 
-  def async(server_pid, query_def) do
-    send(server_pid, {:async, query_def})
-  end
-
-  def sync_result do
+  def get_result do
     receive do
       {:result, message} -> message
       after 1000 -> {:error, :timeout}
@@ -20,11 +16,13 @@ defmodule Parallel.Server do
 
   defp loop do
     receive do
-      {:async, message} -> print message
-      {:sync, caller, message} -> send caller, {:result, message}
+      {caller, query_function} -> send caller, {:result, run_query(query_function)}
     end
     loop()
   end
 
-  defp print(data), do: IO.inspect data
+  defp run_query(query) do
+    :timer.sleep 500
+    query
+  end
 end
