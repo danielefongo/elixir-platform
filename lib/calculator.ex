@@ -1,6 +1,8 @@
 defmodule Parallel.Calculator do
   def start(value) do
-    spawn(fn -> loop(value) end)
+    pid = spawn(fn -> loop(value) end)
+    Process.register(pid, :calculator) #remember that atoms are not garbage-collected
+    {:ok}
   end
 
   defp loop(value) do
@@ -10,12 +12,12 @@ defmodule Parallel.Calculator do
     loop(value)
   end
 
-  def sum(pid, value), do: send(pid, {:sum, value})
-  def min(pid, value), do: send(pid, {:min, value})
-  def mul(pid, value), do: send(pid, {:mul, value})
-  def div(pid, value), do: send(pid, {:div, value})
-  def value(pid) do
-    send(pid, {:value, self()})
+  def sum(value), do: send(:calculator, {:sum, value})
+  def min(value), do: send(:calculator, {:min, value})
+  def mul(value), do: send(:calculator, {:mul, value})
+  def div(value), do: send(:calculator, {:div, value})
+  def value() do
+    send(:calculator, {:value, self()})
     receive do
       {:response, value} -> value
     end

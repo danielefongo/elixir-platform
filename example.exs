@@ -15,7 +15,7 @@ messages = 1..10
 IO.inspect messages
 
 
-pid = Parallel.Calculator.start(3)
-Parallel.Calculator.sum(pid, 3)
-Parallel.Calculator.div(pid, 2)
-IO.inspect Parallel.Calculator.value(pid)
+Parallel.Calculator.start(3)
+Parallel.Calculator.sum(3)
+Parallel.Calculator.div(2)
+IO.inspect Parallel.Calculator.value()
