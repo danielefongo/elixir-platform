@@ -1,16 +1,10 @@
-receive_and_print = fn ->
-  receive do
-    message -> IO.inspect ("Received: '" <> message <> "'")
-  end
-end
-
-myself = self()
 pid = Parallel.Server.start()
-send pid, {:async, "Hello"}
-send pid, {:async, "World"}
 
-send pid, {:sync, myself, "Echo me!"}
-send pid, {:sync, myself, "Echo me another time!"}
+Parallel.Server.async(pid, "Hello")
+Parallel.Server.async(pid, "World")
 
-receive_and_print.()
-receive_and_print.()
+Parallel.Server.sync(pid, "Echo me!")
+Parallel.Server.sync(pid, "Echo me again!")
+
+message = 1..3 |> Enum.map(fn _ -> Parallel.Server.sync_result() end)
+IO.inspect message
