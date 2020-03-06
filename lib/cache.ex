@@ -17,7 +17,7 @@ defmodule Parallel.Cache do
     case Map.fetch(buckets, bucket_name) do
       {:ok, bucket} -> {:reply, bucket, buckets}
       :error ->
-        {:ok, new_bucket} = module.start
+        {:ok, new_bucket} = module.start(bucket_name)
         buckets = Map.put(buckets, bucket_name, new_bucket)
         {:reply, new_bucket, buckets}
     end

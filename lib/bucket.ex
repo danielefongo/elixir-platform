@@ -1,8 +1,8 @@
 defmodule Parallel.Bucket do
   use GenServer
 
-  def start(opts \\ nil) do
-    GenServer.start(__MODULE__, opts)
+  def start(bucket_name) do
+    GenServer.start(__MODULE__, bucket_name, [])
   end
 
   def put(pid, key, value) do
@@ -14,15 +14,16 @@ defmodule Parallel.Bucket do
     GenServer.call(pid, {:get, key})
   end
 
-  def init(_) do
-    {:ok, Map.new}
+  def init(bucket_name) do
+    IO.puts "Bucket #{bucket_name} started."
+    {:ok, {bucket_name, Map.new}}
   end
 
-  def handle_cast({:put, key, value}, state) do
-    {:noreply, Map.put(state, key, value)}
+  def handle_cast({:put, key, value}, {bucket_name, map}) do
+    {:noreply, {bucket_name, Map.put(map, key, value)}}
   end
 
-  def handle_call({:get, key}, _, state) do
-    {:reply, Map.get(state, key), state}
+  def handle_call({:get, key}, _, {bucket_name, map}) do
+    {:reply, Map.get(map, key), {bucket_name, map}}
   end
 end
