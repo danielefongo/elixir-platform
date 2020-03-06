@@ -1,6 +1,6 @@
 defmodule Parallel.Server do
   def start do
-    spawn &(loop/0)
+    spawn(fn -> loop(1) end)
   end
 
   def run(server_pid, query) do
@@ -14,14 +14,15 @@ defmodule Parallel.Server do
     end
   end
 
-  defp loop do
+  defp loop(number) do
     receive do
-      {caller, query} -> send caller, {:result, run_query(query)}
+      {caller, query} -> send caller, {:result, run_query(number, query)}
     end
-    loop()
+    loop(number + 1)
   end
 
-  defp run_query(query) do
+  defp run_query(number, query) do
+    IO.inspect("Serving query number: " <> Kernel.inspect(number))
     :timer.sleep 500
     query
   end
