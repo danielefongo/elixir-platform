@@ -13,3 +13,9 @@ messages = 1..10
   |> map(fn _ -> Parallel.Server.get_result end)
 
 IO.inspect messages
+
+
+pid = Parallel.Calculator.start(3)
+Parallel.Calculator.sum(pid, 3)
+Parallel.Calculator.div(pid, 2)
+IO.inspect Parallel.Calculator.value(pid)
