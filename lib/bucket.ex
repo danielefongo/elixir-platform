@@ -1,4 +1,4 @@
-defmodule Parallel.GenClient do
+defmodule Parallel.Bucket do
   use GenServer
 
   def start(opts \\ nil) do

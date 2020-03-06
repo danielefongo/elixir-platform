@@ -20,7 +20,8 @@ Parallel.Calculator.sum(3)
 Parallel.Calculator.div(2)
 IO.inspect Parallel.Calculator.value()
 
-{:ok, pid} = Parallel.GenClient.start()
-Parallel.GenClient.put(pid, "key", "value")
-value = Parallel.GenClient.get(pid, "key")
+{:ok, pid} = Parallel.Cache.start(Parallel.Bucket)
+bucket = Parallel.Cache.bucket(pid,"1")
+Parallel.Bucket.put(bucket, "key", "value")
+value = Parallel.Bucket.get(bucket, "key")
 IO.inspect value
