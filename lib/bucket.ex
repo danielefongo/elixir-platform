@@ -16,7 +16,8 @@ defmodule Parallel.Bucket do
 
   def init(bucket_name) do
     IO.puts "Bucket #{bucket_name} started."
-    {:ok, {bucket_name, Parallel.Database.load(bucket_name) || Map.new}}
+    send(self(), {:init, bucket_name})
+    {:ok, nil}
   end
 
   def handle_cast({:put, key, value}, {bucket_name, map}) do
@@ -28,4 +29,13 @@ defmodule Parallel.Bucket do
   def handle_call({:get, key}, _, {bucket_name, map}) do
     {:reply, Map.get(map, key), {bucket_name, map}}
   end
+
+  def handle_info({:init, bucket_name}, _state) do
+    {:noreply, {bucket_name, Parallel.Database.load(bucket_name) || Map.new}}
+  end
+
+  def handle_info(_, state) do
+    {:noreply, state}
+  end
+
 end
