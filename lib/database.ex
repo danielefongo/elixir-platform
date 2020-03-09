@@ -19,15 +19,19 @@ defmodule Parallel.Database do
   end
 
   def handle_cast({:store, key, data}, folder) do
-    write(folder, key, binary(data))
+    spawn(fn -> write(folder, key, binary(data)) end)
+
     {:noreply, folder}
   end
 
-  def handle_call({:load, key}, _, folder) do
-    data = case read(folder, key) do
-      {:ok, data} -> erlang(data)
-      _ -> nil end
-    {:reply, data, folder}
+  def handle_call({:load, key}, caller, folder) do
+    spawn(fn ->
+      data = case read(folder, key) do
+        {:ok, data} -> erlang(data)
+        _ -> nil end
+      GenServer.reply(caller, data)
+    end)
+    {:noreply, folder}
   end
 
   defp file_name(folder, key), do: "#{folder}/#{key}"
