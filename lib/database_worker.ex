@@ -2,7 +2,8 @@ defmodule Parallel.DatabaseWorker do
   use GenServer
 
   def start(folder) do
-    GenServer.start(__MODULE__, folder)
+    {:ok, pid} = GenServer.start(__MODULE__, folder)
+    pid
   end
 
   def store(pid, key, data) do

@@ -9,7 +9,6 @@ defmodule Parallel.Bucket do
     GenServer.cast(pid, {:put, key, value})
   end
 
-  @spec get(atom | pid | {atom, any} | {:via, atom, any}, any) :: any
   def get(pid, key) do
     GenServer.call(pid, {:get, key})
   end
