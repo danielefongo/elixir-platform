@@ -1,12 +1,12 @@
 defmodule Parallel.Cache do
   use GenServer
 
-  def start(module_callback, opts \\ []) do
-    GenServer.start(__MODULE__, module_callback, opts)
+  def start_link(module_callback, _opts \\ []) do
+    GenServer.start_link(__MODULE__, module_callback, name: :cache)
   end
 
-  def bucket(pid, key) do
-    GenServer.call(pid, {:bucket, key})
+  def bucket(key) do
+    GenServer.call(:cache, {:bucket, key})
   end
 
   def init(module) do
