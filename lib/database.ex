@@ -15,29 +15,17 @@ defmodule Parallel.Database do
 
   def init(folder) do
     File.mkdir_p(folder)
-    {:ok, folder}
+    Parallel.DatabaseWorker.start(folder)
   end
 
-  def handle_cast({:store, key, data}, folder) do
-    spawn(fn -> write(folder, key, binary(data)) end)
-
-    {:noreply, folder}
+  def handle_cast({:store, key, data}, worker) do
+    Parallel.DatabaseWorker.store(worker, key, data)
+    {:noreply, worker}
   end
 
-  def handle_call({:load, key}, caller, folder) do
-    spawn(fn ->
-      data = case read(folder, key) do
-        {:ok, data} -> erlang(data)
-        _ -> nil end
-      GenServer.reply(caller, data)
-    end)
-    {:noreply, folder}
+  def handle_call({:load, key}, caller, worker) do
+    Parallel.DatabaseWorker.load(worker, key, caller)
+    {:noreply, worker}
   end
-
-  defp file_name(folder, key), do: "#{folder}/#{key}"
-  defp write(folder, key, data), do: file_name(folder, key) |> File.write!(data)
-  defp read(folder, key), do: File.read(file_name(folder, key))
-  defp binary(erlang_data), do: :erlang.term_to_binary(erlang_data)
-  defp erlang(binary_data), do: :erlang.binary_to_term(binary_data)
 
 end
