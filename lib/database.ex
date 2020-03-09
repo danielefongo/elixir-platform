@@ -4,6 +4,7 @@ defmodule Parallel.Database do
   @workers 3
 
   def start_link(folder) do
+    IO.puts "Starting database"
     GenServer.start_link(__MODULE__, folder, name: :database)
   end
 

@@ -2,6 +2,7 @@ defmodule Parallel.Cache do
   use GenServer
 
   def start_link(module_callback, _opts \\ []) do
+    IO.puts "Starting cache"
     GenServer.start_link(__MODULE__, module_callback, name: :cache)
   end
 

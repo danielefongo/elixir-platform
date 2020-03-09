@@ -2,6 +2,7 @@ defmodule Parallel.DatabaseWorker do
   use GenServer
 
   def start_link(folder) do
+    IO.puts "Starting database worker"
     {:ok, pid} = GenServer.start_link(__MODULE__, folder)
     pid
   end

@@ -2,6 +2,7 @@ defmodule Parallel.Bucket do
   use GenServer
 
   def start_link(bucket_name) do
+    IO.puts "Starting bucket #{bucket_name}"
     GenServer.start_link(__MODULE__, bucket_name, [])
   end
 
@@ -14,7 +15,6 @@ defmodule Parallel.Bucket do
   end
 
   def init(bucket_name) do
-    IO.puts "Bucket #{bucket_name} started."
     send(self(), {:init, bucket_name})
     {:ok, nil}
   end
