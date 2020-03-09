@@ -16,11 +16,11 @@ defmodule Parallel.Cache do
 
   def handle_call({:bucket, bucket_name}, _, %{module: module, map: buckets}) do
     case Map.fetch(buckets, bucket_name) do
-      {:ok, bucket} -> {:reply, bucket, buckets}
+      {:ok, bucket} -> {:reply, bucket, %{module: module, map: buckets}}
       :error ->
         {:ok, new_bucket} = module.start(bucket_name)
         buckets = Map.put(buckets, bucket_name, new_bucket)
-        {:reply, new_bucket, buckets}
+        {:reply, new_bucket, %{module: module, map: buckets}}
     end
   end
 end
