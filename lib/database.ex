@@ -16,12 +16,8 @@ defmodule Parallel.Database do
   end
 
   def init(folder) do
-    File.mkdir_p(folder)
-
-    workers = 1..@workers
-      |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start(folder)} end)
-      |> Map.new
-    {:ok, workers}
+    send(self(), {:init, folder})
+    {:ok, nil}
   end
 
   def handle_cast({:store, key, data}, workers) do
@@ -33,6 +29,15 @@ defmodule Parallel.Database do
   def handle_call({:load, key}, caller, workers) do
     worker = worker_for(workers, key)
     Parallel.DatabaseWorker.load(worker, key, caller)
+    {:noreply, workers}
+  end
+
+  def handle_info({:init, folder}, _) do
+    File.mkdir_p(folder)
+
+    workers = 1..@workers
+    |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start(folder)} end)
+    |> Map.new
     {:noreply, workers}
   end
 
