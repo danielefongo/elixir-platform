@@ -10,7 +10,7 @@ defmodule Parallel.Cache do
   end
 
   def init(module) do
-    Parallel.Database.start("./data/persist")
+    Parallel.Database.start_link("./data/persist")
     {:ok, %{module: module, map: Map.new()}}
   end
 
@@ -18,7 +18,7 @@ defmodule Parallel.Cache do
     case Map.fetch(buckets, bucket_name) do
       {:ok, bucket} -> {:reply, bucket, %{module: module, map: buckets}}
       :error ->
-        {:ok, new_bucket} = module.start(bucket_name)
+        {:ok, new_bucket} = module.start_link(bucket_name)
         buckets = Map.put(buckets, bucket_name, new_bucket)
         {:reply, new_bucket, %{module: module, map: buckets}}
     end

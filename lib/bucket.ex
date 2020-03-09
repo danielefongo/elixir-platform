@@ -1,8 +1,8 @@
 defmodule Parallel.Bucket do
   use GenServer
 
-  def start(bucket_name) do
-    GenServer.start(__MODULE__, bucket_name, [])
+  def start_link(bucket_name) do
+    GenServer.start_link(__MODULE__, bucket_name, [])
   end
 
   def put(pid, key, value) do

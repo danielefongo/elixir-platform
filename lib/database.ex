@@ -3,8 +3,8 @@ defmodule Parallel.Database do
 
   @workers 3
 
-  def start(folder) do
-    GenServer.start(__MODULE__, folder, name: :database)
+  def start_link(folder) do
+    GenServer.start_link(__MODULE__, folder, name: :database)
   end
 
   def store(key, data) do
@@ -36,7 +36,7 @@ defmodule Parallel.Database do
     File.mkdir_p(folder)
 
     workers = 1..@workers
-    |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start(folder)} end)
+    |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start_link(folder)} end)
     |> Map.new
     {:noreply, workers}
   end
