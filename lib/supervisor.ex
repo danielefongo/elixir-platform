@@ -4,7 +4,10 @@ defmodule Parallel.Supervisor do
   def start_link, do: Supervisor.start_link(__MODULE__, nil)
 
   def init(_) do
-    childs = [worker(Parallel.Cache, [Parallel.Bucket])]
+    childs = [
+      worker(Parallel.Database, ["./data/persist"]),
+      worker(Parallel.Cache, [Parallel.Bucket])
+    ]
     supervise(childs, strategy: :one_for_one)
   end
 end
