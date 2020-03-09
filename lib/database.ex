@@ -27,10 +27,10 @@ defmodule Parallel.Database do
     {:noreply, worker}
   end
 
-  def handle_call({:load, key}, caller, workers) do
+  def handle_call({:load, key}, _, workers) do
     worker = worker_for(workers, key)
-    Parallel.DatabaseWorker.load(worker, key, caller)
-    {:noreply, workers}
+    data = Parallel.DatabaseWorker.load(worker, key)
+    {:reply, data, workers}
   end
 
   def handle_info({:init, folder}, _) do

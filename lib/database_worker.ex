@@ -11,8 +11,8 @@ defmodule Parallel.DatabaseWorker do
     GenServer.cast(pid, {:store, key, data})
   end
 
-  def load(pid, key, caller) do
-    GenServer.cast(pid, {:load, key, caller})
+  def load(pid, key) do
+    GenServer.call(pid, {:load, key})
   end
 
   def init(folder) do
@@ -25,12 +25,11 @@ defmodule Parallel.DatabaseWorker do
     {:noreply, folder}
   end
 
-  def handle_cast({:load, key, caller}, folder) do
+  def handle_call({:load, key}, _, folder) do
     data = case read(folder, key) do
       {:ok, data} -> erlang(data)
       _ -> nil end
-    GenServer.reply(caller, data)
-    {:noreply, folder}
+    {:reply, data, folder}
   end
 
   defp file_name(folder, key), do: "#{folder}/#{key}"
