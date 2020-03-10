@@ -19,7 +19,8 @@ defmodule Parallel.Database do
 
   def init(_) do
     workers = 1..@workers
-      |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start_link(@folder)} end)
+      |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start_link({@folder, number})} end)
+      |> Enum.map(fn {number, {:ok, pid}} -> {number, pid} end)
       |> Map.new
 
     {:ok, workers}
