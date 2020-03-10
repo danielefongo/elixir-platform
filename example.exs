@@ -1,6 +1,11 @@
 Parallel.System.start_link
 
-Process.whereis(:cache) |> Process.exit(:kill)
+[{worker_pid, _}] = Registry.lookup(
+  Parallel.Registry,
+  {Parallel.DatabaseWorker, 2}
+)
+
+Process.exit(worker_pid, :kill)
 
 :timer.sleep 100
 
