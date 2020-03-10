@@ -2,10 +2,11 @@ defmodule Parallel.Database do
   use GenServer
 
   @workers 3
+  @folder "data/persist"
 
-  def start_link(folder) do
+  def start_link(opts \\ nil) do
     IO.puts "Starting database"
-    GenServer.start_link(__MODULE__, folder, name: :database)
+    GenServer.start_link(__MODULE__, opts, name: :database)
   end
 
   def store(key, data) do
@@ -16,9 +17,12 @@ defmodule Parallel.Database do
     GenServer.call(:database, {:load, key})
   end
 
-  def init(folder) do
-    send(self(), {:init, folder})
-    {:ok, nil}
+  def init(_) do
+    workers = 1..@workers
+      |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start_link(@folder)} end)
+      |> Map.new
+
+    {:ok, workers}
   end
 
   def handle_cast({:store, key, data}, workers) do
@@ -31,15 +35,6 @@ defmodule Parallel.Database do
     worker = worker_for(workers, key)
     data = Parallel.DatabaseWorker.load(worker, key)
     {:reply, data, workers}
-  end
-
-  def handle_info({:init, folder}, _) do
-    File.mkdir_p(folder)
-
-    workers = 1..@workers
-    |> Enum.map(fn number -> {number, Parallel.DatabaseWorker.start_link(folder)} end)
-    |> Map.new
-    {:noreply, workers}
   end
 
   defp worker_for(workers, key), do: Map.get(workers, :erlang.phash2(key, @workers) + 1)

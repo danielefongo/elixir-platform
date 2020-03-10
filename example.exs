@@ -1,6 +1,4 @@
-Parallel.Supervisor.start_link
-
-:timer.sleep 100
+Parallel.System.start_link
 
 Process.whereis(:cache) |> Process.exit(:kill)
 
