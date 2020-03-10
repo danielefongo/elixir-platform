@@ -1,6 +1,8 @@
 defmodule Parallel.Bucket do
   use GenServer, restart: :temporary
 
+  @expiry_idle_timeout :timer.seconds(2)
+
   def start_link(bucket_name) do
     IO.puts "Starting bucket #{bucket_name}"
     GenServer.start_link(__MODULE__, bucket_name, name: via_tuple(bucket_name))
@@ -16,21 +18,26 @@ defmodule Parallel.Bucket do
 
   def init(bucket_name) do
     send(self(), {:init, bucket_name})
-    {:ok, nil}
+    {:ok, nil, @expiry_idle_timeout}
   end
 
   def handle_cast({:put, key, value}, {bucket_name, map}) do
     new_map = Map.put(map, key, value)
     Parallel.Database.store(bucket_name, new_map)
-    {:noreply, {bucket_name, new_map}}
+    {:noreply, {bucket_name, new_map}, @expiry_idle_timeout}
   end
 
   def handle_call({:get, key}, _, {bucket_name, map}) do
-    {:reply, Map.get(map, key), {bucket_name, map}}
+    {:reply, Map.get(map, key), {bucket_name, map}, @expiry_idle_timeout}
   end
 
   def handle_info({:init, bucket_name}, _state) do
     {:noreply, {bucket_name, Parallel.Database.load(bucket_name) || Map.new}}
+  end
+
+  def handle_info(:timeout, {bucket_name, map}) do
+    IO.puts("Stopping bucket #{bucket_name} for timeout.")
+    {:stop, :normal, {bucket_name, map}}
   end
 
   def handle_info(_, state) do
