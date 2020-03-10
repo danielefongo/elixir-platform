@@ -1,13 +1,17 @@
 Parallel.System.start_link
 
+bucket = Parallel.Cache.bucket("1")
+
 [{worker_pid, _}] = Registry.lookup(
   Parallel.Registry,
-  {Parallel.DatabaseWorker, 2}
+  {Parallel.Bucket, "1"}
 )
 
 Process.exit(worker_pid, :kill)
 
 :timer.sleep 100
+
+IO.puts "..."
 
 bucket = Parallel.Cache.bucket("1")
 Parallel.Bucket.put(bucket, "key", "value")

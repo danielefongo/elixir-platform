@@ -1,5 +1,5 @@
 defmodule Parallel.Bucket do
-  use GenServer
+  use GenServer, restart: :temporary
 
   def start_link(bucket_name) do
     IO.puts "Starting bucket #{bucket_name}"
