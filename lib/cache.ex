@@ -1,26 +1,26 @@
 defmodule Parallel.Cache do
-  use GenServer
-
-  def start_link(opts \\ nil) do
+  def start_link do
     IO.puts "Starting cache"
-    GenServer.start_link(__MODULE__, opts, name: :cache)
+    DynamicSupervisor.start_link(name: __MODULE__, strategy: :one_for_one)
   end
 
-  def bucket(key) do
-    GenServer.call(:cache, {:bucket, key})
+  def child_spec(_any) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      type: :supervisor
+    }
   end
 
-  def init(_opts) do
-    {:ok, Map.new()}
-  end
-
-  def handle_call({:bucket, bucket_name}, _, buckets) do
-    case Map.fetch(buckets, bucket_name) do
-      {:ok, bucket} -> {:reply, bucket, buckets}
-      :error ->
-        {:ok, new_bucket} = Parallel.Bucket.start_link(bucket_name)
-        buckets = Map.put(buckets, bucket_name, new_bucket)
-        {:reply, new_bucket, buckets}
+  def bucket(bucket_name) do
+    case start_child(bucket_name) do
+      {:ok, pid} -> pid
+      {:error, {:already_started, pid}} -> pid
     end
+  end
+
+  defp start_child(bucket_name) do
+    # not fast solution
+    DynamicSupervisor.start_child(__MODULE__, {Parallel.Bucket, bucket_name})
   end
 end

@@ -3,7 +3,7 @@ defmodule Parallel.Bucket do
 
   def start_link(bucket_name) do
     IO.puts "Starting bucket #{bucket_name}"
-    GenServer.start_link(__MODULE__, bucket_name, [])
+    GenServer.start_link(__MODULE__, bucket_name, name: via_tuple(bucket_name))
   end
 
   def put(pid, key, value) do
@@ -37,4 +37,7 @@ defmodule Parallel.Bucket do
     {:noreply, state}
   end
 
+  defp via_tuple(name) do
+    Parallel.Registry.via_tuple({__MODULE__, name})
+  end
 end
