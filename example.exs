@@ -1,5 +1,3 @@
-Parallel.System.start_link
-
 Parallel.Cache.bucket("1")
 
 [{worker_pid, _}] = Registry.lookup(
@@ -18,4 +16,4 @@ Parallel.Bucket.put(bucket, "key", "value")
 value = Parallel.Bucket.get(bucket, "key")
 IO.inspect value
 
-Process.sleep(:timer.seconds(10))
+Process.sleep(:timer.seconds(3))
