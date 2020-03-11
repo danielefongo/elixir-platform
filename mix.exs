@@ -22,7 +22,8 @@ defmodule Parallel.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:poolboy, "~> 1.5"}
+      {:poolboy, "~> 1.5"},
+      {:plug_cowboy, "~> 1.0"}
     ]
   end
 end

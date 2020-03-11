@@ -4,7 +4,8 @@ defmodule Parallel.System do
       [
         Parallel.Registry,
         Parallel.Database,
-        Parallel.Cache
+        Parallel.Cache,
+        Parallel.Web
       ],
       strategy: :one_for_one
     )
