@@ -5,9 +5,9 @@ defmodule Parallel.Web do
   plug :dispatch
 
   def child_spec(_arg) do
-    a = Plug.Adapters.Cowboy.child_spec(
+    Plug.Adapters.Cowboy.child_spec(
       scheme: :http,
-      options: [port: 5454],
+      options: [port: Parallel.Env.get!(:http_port)],
       plug: __MODULE__
     )
   end
