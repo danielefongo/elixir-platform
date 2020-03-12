@@ -3,6 +3,7 @@ defmodule Parallel.System do
     Supervisor.start_link(
       [
         Parallel.Registry,
+        Parallel.Repo,
         Parallel.Database,
         Parallel.Cache,
         Parallel.Web

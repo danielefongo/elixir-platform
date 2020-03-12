@@ -23,7 +23,9 @@ defmodule Parallel.MixProject do
   defp deps do
     [
       {:poolboy, "~> 1.5"},
-      {:plug_cowboy, "~> 1.0"}
+      {:plug_cowboy, "~> 1.0"},
+      {:ecto_sql, "~> 3.0"},
+      {:myxql, "~> 0.3.3"}
     ]
   end
 end
