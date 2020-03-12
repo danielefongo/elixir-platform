@@ -1,6 +1,6 @@
 defmodule Parallel.Database do
   @folder "data/persist"
-  @worker Parallel.FileDatabaseWorker
+  @worker Parallel.Env.get!(:db_worker)
 
   def child_spec(_) do
     File.mkdir_p!(@folder) # meh

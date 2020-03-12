@@ -1,7 +1,5 @@
 use Mix.Config
 
-# ...........................
-# general configurations here
-# ...........................
+config :parallel, db_worker: Parallel.FileDatabaseWorker
 
 import_config "#{Mix.env()}.exs"
