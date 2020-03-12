@@ -1,8 +1,46 @@
+defmodule Parallel.EctoDatabaseWorker do
+  use GenServer
+  alias Parallel.{Repo}
+  alias Parallel.EctoBucket, as: Bucket
+
+  def start_link(_) do
+    IO.puts "Starting ecto database worker"
+    GenServer.start_link(__MODULE__, nil)
+  end
+
+  def store(_, key, data) do
+    key
+      |> bucket_from
+      |> Bucket.newmap_changeset(%{values: data})
+      |> Repo.update
+  end
+
+  def load(_, key) do
+    case bucket_from(key) do
+      nil ->
+        bucket = Bucket.new(key)
+        Repo.insert(bucket)
+        bucket.values
+      bucket -> bucket.values
+    end
+  end
+
+  def init(_) do
+    {:ok, nil}
+  end
+
+  defp bucket_from(key) do
+    key
+      |> Bucket.Queries.find
+      |> Repo.one
+  end
+end
+
 defmodule Parallel.FileDatabaseWorker do
   use GenServer
 
   def start_link(folder) do
-    IO.puts "Starting database worker"
+    IO.puts "Starting file database worker"
     GenServer.start_link(__MODULE__, folder)
   end
 

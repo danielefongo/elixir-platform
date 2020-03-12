@@ -8,6 +8,6 @@ config :parallel, Parallel.Repo,
   port: 3306
 
 config :parallel, ecto_repos: [Parallel.Repo]
-config :parallel, db_worker: Parallel.FileDatabaseWorker
+config :parallel, db_worker: Parallel.EctoDatabaseWorker
 
 import_config "#{Mix.env()}.exs"
