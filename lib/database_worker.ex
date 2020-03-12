@@ -1,4 +1,4 @@
-defmodule Parallel.DatabaseWorker do
+defmodule Parallel.FileDatabaseWorker do
   use GenServer
 
   def start_link(folder) do
