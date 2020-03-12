@@ -7,6 +7,7 @@ config :parallel, Parallel.Repo,
   hostname: "localhost",
   port: 3306
 
+config :parallel, ecto_repos: [Parallel.Repo]
 config :parallel, db_worker: Parallel.FileDatabaseWorker
 
 import_config "#{Mix.env()}.exs"
